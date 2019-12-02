@@ -12,6 +12,7 @@ const resource = [
     { id: 10, parentId: 3, name: 'three-two' },
     { id: 11, parentId: 3, name: 'three-three' },
     { id: 12, parentId: 0, name: 'four' },
+    { id: 12, parentId: 4, name: 'one-one-one' },
 ];
 export const getTree = (data = resource) => {
     let resultTree =arrayToTree(data, {

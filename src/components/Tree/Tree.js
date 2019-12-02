@@ -9,7 +9,7 @@ class Tree extends Component {
                 {
                     data !== ''
                         ? data.map(item => {
-                            return <TreeItem data={item}/>
+                            return <TreeItem key={item.id + "TreeItem"} data={item}/>
                         })
                         : 'empty'
                 }
