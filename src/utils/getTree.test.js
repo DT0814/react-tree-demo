@@ -8,3 +8,7 @@ test('should be return tree', () => {
     let actual = getTree(arr)[0].children[0];
     expect(actual.name).toBe('one');
 });
+test('should be return empty tree when give empty array', () => {
+    let actual = getTree([]);
+    expect(actual).toBeEmpty();
+});

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import Tree from "../components/Tree/Tree";
+import Forest from "../components/Forest/Forest";
 import { getTree } from "../utils/getTree";
 
 class App extends Component {
@@ -19,7 +19,7 @@ class App extends Component {
 
     render() {
         return (
-            <Tree data={this.state.treeData}/>
+            <Forest data={this.state.treeData}/>
         );
     }
 }

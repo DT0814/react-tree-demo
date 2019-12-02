@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import TreeItemInfo from "./TreeItemInfo/TreeItemInfo";
+import './TreeItem.css'
 
 class TreeItem extends Component {
     constructor(props) {
@@ -8,28 +10,28 @@ class TreeItem extends Component {
         }
     }
 
-    handlerShowClick() {
+    updateShowChildren(showChildren) {
         this.setState(
             {
-                showChildren: !this.state.showChildren
+                showChildren: showChildren
             }
         )
     }
 
     render() {
-        let show = this.state.showChildren && this.props.data.children !== undefined;
+        let children = this.props.data.children;
+        let showChildren = this.state.showChildren;
         return (
-            <div>
-                <button onClick={this.handlerShowClick.bind(this)}>{this.props.data.name}</button>
-                {
-                    show ?
-                        this.props.data.children.map(item => {
-                                return <TreeItem key={item.id + "TreeItem"} data={item}/>
-                            }
-                        )
-                        : ''
-                }
-
+            <div className="tree-item-div">
+                <TreeItemInfo
+                    handlerClick={this.updateShowChildren.bind(this)}
+                    showChildren={showChildren}
+                    text={this.props.data.name}/>
+                <div hidden={!showChildren}>
+                    {
+                        children.map(item => <TreeItem key={item.id + "TreeItem"} data={item}/>)
+                    }
+                </div>
             </div>
         );
     }

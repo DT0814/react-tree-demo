@@ -1,0 +1,16 @@
+button {
+    border-style: none;
+    border-radius: 5px;
+    background-color: green;
+    color: white;
+    font-size: 20px;
+    min-width: 100px;
+    min-height: 40px;
+    margin: 10px 2px;
+}
+span {
+    font-size: 20px;
+}
+.tree-item-div {
+    margin-left: 40px;
+}
