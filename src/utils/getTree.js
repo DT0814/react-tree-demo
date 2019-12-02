@@ -1,9 +1,8 @@
 import arrayToTree from 'array-to-tree'
 const resource = [
-    { id: 100, parentId: null, name: 'root' },
-    { id: 1, parentId: 100, name: 'one' },
-    { id: 2, parentId: 100, name: 'two' },
-    { id: 3, parentId: 100, name: 'three' },
+    { id: 1, parentId: 0, name: 'one' },
+    { id: 2, parentId: 0, name: 'two' },
+    { id: 3, parentId: 0, name: 'three' },
     { id: 4, parentId: 1, name: 'one-one' },
     { id: 5, parentId: 1, name: 'one-two' },
     { id: 6, parentId: 1, name: 'one-three' },
