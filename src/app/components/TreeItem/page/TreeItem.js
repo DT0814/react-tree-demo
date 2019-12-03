@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import TreeItemInfo from "./TreeItemInfo/TreeItemInfo";
+import TreeItemInfo from "../components/TreeItemInfo/TreeItemInfo";
 import './TreeItem.css'
 
 class TreeItem extends Component {
