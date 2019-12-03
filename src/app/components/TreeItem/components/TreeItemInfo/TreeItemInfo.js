@@ -1,14 +1,14 @@
 import React from 'react';
 
 const TreeItemInfo = (props) => {
-    let { showChildren, text } = props;
+    let { showChildren, text, handlerClick } = props;
     return (
         <div>
             <span>
                 {showChildren ? '➖' : '➕'}
             </span>
 
-            <button onClick={() => props.handlerClick(!showChildren)}>{text}</button>
+            <button onClick={() => handlerClick(!showChildren)}>{text}</button>
         </div>
     );
 }

@@ -1,41 +1,27 @@
-import React, { Component } from 'react';
+import React, { useContext } from 'react';
 import TreeItem from "../../TreeItem/page/TreeItem";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
+import { StoreContext } from 'redux-react-hook';
 import { getForestData } from "../action/ForestActions";
+import { useDispatch } from 'react-redux';
 
-class Forest extends Component {
-    componentDidMount() {
-        this.props.getForestData();
-    }
+export default function Forest() {
+    useDispatch()(getForestData());
+    const forestData = useContext(StoreContext).getState().forest.forestData;
+    return (
+        <div>
+            {forestData.length !== 0 ? renderData(forestData) : 'empty'}
+        </div>
+    );
 
-    render() {
-        const { forestData } = this.props;
-        return (
-            <div>
-                {forestData.length !== 0 ? this.renderData(forestData) : 'empty'}
-            </div>
-        );
-    }
 
-    renderData(forestData) {
-        return <div>
-            {
-                forestData.map(item => {
-                    return <TreeItem key={item.id + "TreeItem"} data={item}/>
-                })
-            }
-        </div>;
-    }
 }
 
-const mapStateToProps = state => ({
-    forestData: state.forest.forestData
-});
-
-const mapDispatchToProps = dispatch => bindActionCreators({
-    getForestData
-}, dispatch);
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(Forest);
+function renderData(forestData) {
+    return <div>
+        {
+            forestData.map(item => {
+                return <TreeItem key={item.id + "TreeItem"} data={item}/>
+            })
+        }
+    </div>;
+}
