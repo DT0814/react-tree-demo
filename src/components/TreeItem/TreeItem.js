@@ -22,7 +22,7 @@ class TreeItem extends Component {
         let children = this.props.data.children;
         let showChildren = this.state.showChildren;
         return (
-            <div className="tree-item-div">
+            <div className="tree-item-div" >
                 <TreeItemInfo
                     handlerClick={this.updateShowChildren.bind(this)}
                     showChildren={showChildren}
