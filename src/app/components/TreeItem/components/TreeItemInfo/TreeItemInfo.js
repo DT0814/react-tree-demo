@@ -1,12 +1,13 @@
 import React from 'react';
+import closeImg from '../resource/close.png'
+import openImg from '../resource/open.png'
+import './TreeItemInfo.css'
 
 const TreeItemInfo = (props) => {
     let { showChildren, text, handlerClick } = props;
     return (
         <div>
-            <span>
-                {showChildren ? '➖' : '➕'}
-            </span>
+            {showChildren ? <img src={closeImg}/> : <img src={openImg}/>}
 
             <button onClick={() => handlerClick(!showChildren)}>{text}</button>
         </div>
