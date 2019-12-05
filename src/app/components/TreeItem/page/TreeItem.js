@@ -1,28 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import TreeItemInfo from "../components/TreeItemInfo/TreeItemInfo";
 import './TreeItem.css'
-import { useDispatch } from "react-redux";
-import { updateForestData } from "../../Forest/action/ForestActions";
 
-function TreeItem({ data, initShowChildren = true, updateDataEvent }) {
+function TreeItem({ data, handlerUpdateData }) {
     let children = data.children;
-    const [showChildren, setShowChildren] = useState(initShowChildren);
-    let className = showChildren ? "tree-children-show" : "";
-    useEffect(() => {
-        setShowChildren(data.openChildren);
-    }, [data.openChildren]);
-    const dispatch = useDispatch();
-
+    let className = data.openChildren ? "tree-children-show" : "";
     return (
         <div className="tree-item-div">
             <TreeItemInfo
                 handlerClick={(res) => {
-                    setShowChildren(res);
                     data.openChildren = res;
-                    dispatch(updateForestData(data));
-                    updateDataEvent();
+                    handlerUpdateData();
                 }}
-                showChildren={showChildren}
+                showChildren={data.openChildren}
                 text={data.name}
                 key={data.id + "TreeItemInfo"}
             />
@@ -32,8 +22,7 @@ function TreeItem({ data, initShowChildren = true, updateDataEvent }) {
                     children.map(item => <TreeItem
                         key={item.id + "TreeItem"}
                         data={item}
-                        updateDataEvent={updateDataEvent}
-                        initShowChildren={initShowChildren}/>)
+                        handlerUpdateData={handlerUpdateData}/>)
                 }
             </div>
         </div>

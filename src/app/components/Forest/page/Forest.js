@@ -1,38 +1,50 @@
 import React, { Fragment, useContext, useState } from 'react';
 import TreeItem from "../../TreeItem/page/TreeItem";
-import { StoreContext } from 'redux-react-hook';
-import { getForestData, updateForestData } from "../action/ForestActions";
-import { useDispatch } from 'react-redux';
 import "./Forest.css"
+import { TreeContext } from "../context/TreeContext";
 
 export default function Forest() {
-    const dispatch = useDispatch();
-    dispatch(getForestData());
-
-    const state = useContext(StoreContext).getState();
-    const forestData = state.forest.forestData;
-    let [haveChildrenOpen, setHaveChildrenOpen] = useState(false);
+    const context = useContext(TreeContext);
     const [childrenOpenCloseText, updateChildrenOpenCloseText] = useState("open");
-    const updateDataEvent = () => {
-        let haveOpen;
+    const [forestData,setForestData] = useState(context.forest);
+
+    const handlerUpdateData = (id, isOpen) => {
+
         forestData.forEach(it => {
-            if (it.openChildren === true) {
+            updateTreeDataById(it, id, isOpen);
+        });
+
+        let haveOpen;
+        setForestData(forestData.map(it => {
+            if (it.openChildren) {
                 haveOpen = true;
             }
-        });
+            return it;
+        }));
         updateChildrenOpenCloseText(haveOpen ? "close" : "open");
     };
 
-    function updateTreeData(it, haveOpen) {
+    const updateTreeData = (it, haveOpen) => {
         if (it.children.length > 0) {
             it.children.forEach(cit => {
                 updateTreeData(cit, haveOpen);
             });
         }
         it.openChildren = !haveOpen;
-        dispatch(updateForestData(it))
-    }
+    };
 
+    const updateTreeDataById = (it, id, isOpen) => {
+        if (it.id === id) {
+            it.openChildren = isOpen;
+            console.log(it);
+            return;
+        }
+        if (it.children.length > 0) {
+            it.children.forEach(cit => {
+                updateTreeDataById(cit, id, isOpen);
+            });
+        }
+    };
     const openCloseAllTree = () => {
         let haveOpen = false;
         forestData.forEach(it => {
@@ -40,7 +52,6 @@ export default function Forest() {
                 haveOpen = true;
             }
         });
-        setHaveChildrenOpen(!haveOpen);
         updateChildrenOpenCloseText(!haveOpen ? "close" : "open");
         forestData.forEach(it => {
             updateTreeData(it, haveOpen);
@@ -52,21 +63,19 @@ export default function Forest() {
             <div className="forest-header-div">
                 <button onClick={openCloseAllTree.bind(this)}>{childrenOpenCloseText}</button>
             </div>
-            {forestData.length !== 0 ? renderData(forestData, haveChildrenOpen, updateDataEvent) : 'empty'}
+
+            {forestData.length !== 0
+                ? <TreeContext.Provider>
+                    {
+                        forestData.map(item => {
+                            return <TreeItem
+                                key={item.id + "TreeItem"}
+                                data={item}
+                                handlerUpdateData={handlerUpdateData}/>
+                        })
+                    }
+                </TreeContext.Provider>
+                : 'empty'}
         </div>
     );
-}
-
-const renderData = (forestData, haveChildrenOpen, updateDataEvent) => {
-    return <Fragment>
-        {
-            forestData.map(item => {
-                return <TreeItem
-                    key={item.id + "TreeItem"}
-                    data={item}
-                    updateDataEvent={updateDataEvent}
-                    initShowChildren={haveChildrenOpen}/>
-            })
-        }
-    </Fragment>;
 }
