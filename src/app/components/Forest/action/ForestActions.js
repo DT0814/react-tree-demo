@@ -6,3 +6,9 @@ export const getForestData = () => (dispatch) => {
         forestData: getTree()
     });
 };
+export const updateForestData = (TreeData) => (dispatch) => {
+    dispatch({
+        type: 'UPDATE_FOREST',
+        TreeData: TreeData
+    });
+};

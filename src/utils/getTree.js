@@ -12,6 +12,8 @@ const resource = [
     { id: 10, parentId: 2, name: 'three-three' },
     { id: 11, parentId: null, name: 'four' },
     { id: 12, parentId: 3, name: 'one-one-one' },
+    { id: 13, parentId: 12, name: 'one-one-one-one' },
+
 ];
 
 function arrayToTree(array) {

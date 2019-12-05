@@ -6,10 +6,11 @@ import './TreeItemInfo.css'
 const TreeItemInfo = (props) => {
     let { showChildren, text, handlerClick } = props;
     return (
-        <div>
-            {showChildren ? <img src={closeImg}/> : <img src={openImg}/>}
-
-            <button onClick={() => handlerClick(!showChildren)}>{text}</button>
+        <div className="tree-info-div" onClick={() => handlerClick(!showChildren)}>
+            <div className="file-img-div">
+                {showChildren ? <img src={closeImg}/> : <img src={openImg}/>}
+            </div>
+            <span>{text}</span>
         </div>
     );
 }

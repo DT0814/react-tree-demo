@@ -9,6 +9,16 @@ export default (state = initState, action) => {
                 ...state,
                 forestData: action.forestData
             };
+        case 'UPDATE_FOREST':
+            const res = state.forestData.map(it => {
+                if (it.id === action.TreeData.id) {
+                    it.openChildren = action.TreeData.openChildren;
+                }
+                return it;
+            });
+            return {
+                forestData: res
+            };
         default:
             return state
     }

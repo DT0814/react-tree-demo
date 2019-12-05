@@ -1,0 +1,20 @@
+.forest-div {
+    width: 400px;
+    margin: 0 auto;
+}
+
+.forest-header-div {
+    text-align: right;
+}
+
+.forest-header-div button {
+    border-style: none;
+    background-color: green;
+    color: white;
+    font-size: 20px;
+    border-radius: 8px;
+    width: 80px;
+    height: 40px;
+    bottom: 0;
+    cursor: pointer;
+}
