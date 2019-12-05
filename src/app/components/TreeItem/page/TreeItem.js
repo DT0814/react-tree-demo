@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useContext } from 'react';
 import TreeItemInfo from "../components/TreeItemInfo/TreeItemInfo";
 import './TreeItem.css'
+import { TreeContext } from "../../Forest/page/Forest";
 
-function TreeItem({ data, handlerUpdateData }) {
+function TreeItem({ data }) {
     let children = data.children;
     let className = data.openChildren ? "tree-children-show" : "";
+    const context = useContext(TreeContext);
+    console.log(context);
     return (
         <div className="tree-item-div">
             <TreeItemInfo
-                handlerClick={(res) => {
-                    data.openChildren = res;
-                    handlerUpdateData();
+                handlerClick={(isOpen) => {
+                    context.handlerUpdateData(data.id,isOpen);
                 }}
                 showChildren={data.openChildren}
                 text={data.name}
@@ -21,8 +23,7 @@ function TreeItem({ data, handlerUpdateData }) {
                 {
                     children.map(item => <TreeItem
                         key={item.id + "TreeItem"}
-                        data={item}
-                        handlerUpdateData={handlerUpdateData}/>)
+                        data={item}/>)
                 }
             </div>
         </div>

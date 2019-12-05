@@ -1,24 +1,31 @@
 import React, { Fragment, useContext, useState } from 'react';
 import TreeItem from "../../TreeItem/page/TreeItem";
 import "./Forest.css"
-import { TreeContext } from "../context/TreeContext";
+import { getTree } from "../../../../utils/getTree";
 
+const forest = getTree();
+forest.forEach(it => it.openChildren = false);
+export const TreeContext = React.createContext({});
 export default function Forest() {
+
     const context = useContext(TreeContext);
+    context.forest = forest;
+
     const [childrenOpenCloseText, updateChildrenOpenCloseText] = useState("open");
-    const [forestData,setForestData] = useState(context.forest);
+    const [forestData, setForestData] = useState(context.forest);
 
-    const handlerUpdateData = (id, isOpen) => {
-
+    context.handlerUpdateData = (id, isOpen) => {
         forestData.forEach(it => {
             updateTreeDataById(it, id, isOpen);
         });
-
         let haveOpen;
-        setForestData(forestData.map(it => {
+        forestData.forEach(it => {
             if (it.openChildren) {
                 haveOpen = true;
             }
+        });
+        setForestData(forestData.map(it => {
+            updateTreeDataById(it, id, isOpen);
             return it;
         }));
         updateChildrenOpenCloseText(haveOpen ? "close" : "open");
@@ -36,7 +43,6 @@ export default function Forest() {
     const updateTreeDataById = (it, id, isOpen) => {
         if (it.id === id) {
             it.openChildren = isOpen;
-            console.log(it);
             return;
         }
         if (it.children.length > 0) {
@@ -65,16 +71,18 @@ export default function Forest() {
             </div>
 
             {forestData.length !== 0
-                ? <TreeContext.Provider>
+                ? <Fragment>
                     {
                         forestData.map(item => {
-                            return <TreeItem
-                                key={item.id + "TreeItem"}
-                                data={item}
-                                handlerUpdateData={handlerUpdateData}/>
+                            return <TreeContext.Provider value={context}>
+                                <TreeItem
+                                    key={item.id + "TreeItem"}
+                                    data={item}/>
+                            </TreeContext.Provider>
+
                         })
                     }
-                </TreeContext.Provider>
+                </Fragment>
                 : 'empty'}
         </div>
     );
