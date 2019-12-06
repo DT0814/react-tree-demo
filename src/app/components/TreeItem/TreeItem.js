@@ -1,13 +1,12 @@
 import React, { useContext } from 'react';
-import TreeItemInfo from "../components/TreeItemInfo/TreeItemInfo";
+import TreeItemInfo from "./components/TreeItemInfo/TreeItemInfo";
 import './TreeItem.css'
-import { TreeContext } from "../../Forest/page/Forest";
+import { TreeContext } from "../../App";
 
 function TreeItem({ data }) {
-    let children = data.children;
-    let className = data.openChildren ? "tree-children-show" : "";
+    const children = data.children;
+    const className = data.openChildren ? "tree-children-show" : "";
     const context = useContext(TreeContext);
-    console.log(context);
     return (
         <div className="tree-item-div">
             <TreeItemInfo

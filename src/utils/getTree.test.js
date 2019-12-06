@@ -5,10 +5,10 @@ test('should be return tree', () => {
         { id: 100, parentId: null, name: 'root' },
         { id: 1, parentId: 100, name: 'one' }
     ];
-    let actual = getTree(arr)[0].children[0];
+    const actual = getTree(arr)[0].children[0];
     expect(actual.name).toBe('one');
 });
 test('should be return empty tree when give empty array', () => {
-    let actual = getTree([]);
+    const actual = getTree([]);
     expect(actual).toBeEmpty();
 });
