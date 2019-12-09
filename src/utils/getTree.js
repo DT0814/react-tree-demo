@@ -20,6 +20,7 @@ function arrayToTree(array) {
     const mapper = {};
     array.forEach(it => {
         it.children = [];
+        it.open = false;
         mapper[it.id] = it;
     });
 
@@ -30,7 +31,6 @@ function arrayToTree(array) {
     });
     return array.filter(it => it.parentId == null);
 }
-
 
 export const getTree = (data = resource) => {
     return arrayToTree(data);

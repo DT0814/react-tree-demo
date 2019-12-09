@@ -1,6 +1,6 @@
 import React from 'react';
-import closeImg from '../resource/close.png'
-import openImg from '../resource/open.png'
+import closeImg from '../../resource/close.png'
+import openImg from '../../resource/open.png'
 import './TreeItemInfo.css'
 
 const TreeItemInfo = (props) => {
