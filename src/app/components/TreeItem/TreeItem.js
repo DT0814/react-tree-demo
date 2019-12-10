@@ -1,20 +1,17 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import TreeItemInfo from "../TreeItemInfo/TreeItemInfo";
 import './TreeItem.css'
-import { TreeContext } from "../../App";
 
 function TreeItem({ data }) {
     const children = data.children;
     const className = data.open ? "tree-children-show" : "";
-    const context = useContext(TreeContext);
     return (
         <div className="tree-item-div">
             <TreeItemInfo
-                handlerClick={(isOpen) => {
-                    context.handleUpdateData(data.id,isOpen);
-                }}
                 showChildren={data.open}
                 text={data.name}
+                treeId={data.id}
+                check={data.check}
                 key={data.id + "TreeItemInfo"}
             />
             <div key={data.id + "div"}

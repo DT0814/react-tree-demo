@@ -9,9 +9,9 @@ function App() {
 
     const [forest, setForest] = useState(getTree());
 
-    const handleUpdateData = (id) => {
+    const handleOpenOrClose = (id) => {
         setForest(forest.map(it => {
-            return updateTreeDataById(it, id);
+            return openOrCloseTreeDataById(it, id);
         }));
     };
 
@@ -25,11 +25,11 @@ function App() {
         return null;
     };
 
-    const updateTreeDataById = (treeData, id) => {
+    const openOrCloseTreeDataById = (treeData, id) => {
         if (treeData.id === id) {
             return { ...treeData, open: !treeData.open };
         }
-        const targetChild = findAndReturn(treeData.children, it => updateTreeDataById(it, id), (a, b) => (a !== b));
+        const targetChild = findAndReturn(treeData.children, it => openOrCloseTreeDataById(it, id), (a, b) => (a !== b));
         if (targetChild === null) {
             return treeData;
         }
@@ -39,18 +39,54 @@ function App() {
         };
     };
 
-    const openCloseAllTree = () => {
+    const handleCheck = (id) => {
+        const map = forest.map(it => {
+            return updateCheckById(it, id);
+        });
+        console.log(map);
+        setForest(map);
+    };
+    const updateCheckById = (treeData, id) => {
+        if (treeData.children.length > 0) {
+            const children = treeData.children.map(childrenData => {
+                return updateCheckById(childrenData, id);
+            });
+            if (children.some((it, index) => it !== treeData.children[index])) {
+                if (treeData.id === id) {
+                    return { ...treeData, check: true, children: children };
+                }
+                return { ...treeData, children: children, check: false };
+            }
+            if (treeData.id === id) {
+                return { ...treeData, check: true };
+            } else if (treeData.check === true) {
+                return { ...treeData, check: false }
+            } else {
+                return treeData;
+            }
+        }
+        if (treeData.check === true) {
+            return { ...treeData, check: false }
+        }
+
+        if (treeData.id === id) {
+            return { ...treeData, check: true };
+        }
+        return treeData;
+    };
+
+    const toggleAllTree = () => {
         const isOpen = !forest.some(it => it.open);
         setForest(forest.map(treeData => {
-            return updateTreeData(treeData, isOpen);
+            return openOrCloseAll(treeData, isOpen);
         }));
     };
 
-    const updateTreeData = (treeData, isOpen) => {
+    const openOrCloseAll = (treeData, isOpen) => {
         const copyTreeData = { ...treeData, open: isOpen };
         if (copyTreeData.children.length > 0) {
             const children = copyTreeData.children.map(childrenData => {
-                return updateTreeData(childrenData, isOpen);
+                return openOrCloseAll(childrenData, isOpen);
             });
             return { ...copyTreeData, children: children }
         }
@@ -58,7 +94,7 @@ function App() {
     };
 
     return (
-        <TreeContext.Provider value={{ forest, handleUpdateData, openCloseAllTree }}>
+        <TreeContext.Provider value={{ forest, handleOpenOrClose, toggleAllTree, handleCheck }}>
             <Forest/>
         </TreeContext.Provider>
     );

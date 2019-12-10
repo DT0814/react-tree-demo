@@ -1,6 +1,5 @@
 .forest-div {
-    width: 400px;
-    margin: 0 auto;
+    min-width: 400px;
 }
 
 .forest-header-div {

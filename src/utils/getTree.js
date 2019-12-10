@@ -12,8 +12,6 @@ const resource = [
     { id: 10, parentId: 2, name: 'three-three' },
     { id: 11, parentId: null, name: 'four' },
     { id: 12, parentId: 3, name: 'one-one-one' },
-    { id: 13, parentId: 12, name: 'one-one-one-one' },
-
 ];
 
 function arrayToTree(array) {
@@ -21,6 +19,7 @@ function arrayToTree(array) {
     array.forEach(it => {
         it.children = [];
         it.open = false;
+        it.check = false;
         mapper[it.id] = it;
     });
 

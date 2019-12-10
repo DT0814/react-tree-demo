@@ -1,14 +1,12 @@
 .tree-item-div {
     width: 300px;
-    margin-left: 40px;
-    opacity: 1;
+    padding-left: 40px;
 }
 
 .tree-children-div {
     max-height: 0;
     transition: max-height 0.4s ease-out;
     overflow: hidden;
-
 }
 
 .tree-children-show {
