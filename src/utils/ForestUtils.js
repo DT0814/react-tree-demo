@@ -31,6 +31,6 @@ function arrayToTree(array) {
     return array.filter(it => it.parentId == null);
 }
 
-export const getTree = (data = resource) => {
+export const getForest = (data = resource) => {
     return arrayToTree(data);
 };

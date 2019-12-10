@@ -4,7 +4,7 @@ import "./Forest.css"
 import { TreeContext } from "../../App";
 
 
-export default function Forest() {
+const Forest = () => {
     const { forest, toggleAllTree } = useContext(TreeContext);
     const OpenOrCloseText = forest.some(it => it.open) ? "closeAll" : "openAll";
 
@@ -21,4 +21,5 @@ export default function Forest() {
             {forest.length === 0 && 'empty'}
         </div>
     );
-}
+};
+export default Forest;

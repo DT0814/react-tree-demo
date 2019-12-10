@@ -2,7 +2,7 @@ import React from 'react';
 import TreeItemInfo from "../TreeItemInfo/TreeItemInfo";
 import './TreeItem.css'
 
-function TreeItem({ data }) {
+const TreeItem=({ data }) => {
     const children = data.children;
     const className = data.open ? "tree-children-show" : "";
     return (

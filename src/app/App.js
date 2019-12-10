@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import './App.css';
 import Forest from "./page/Forest/Forest";
 import ShowFiles from "./page/ShowFiles/ShowFiles";
-import { getTree } from "../utils/getTree";
+import { getForest } from "../utils/ForestUtils";
 
 export const TreeContext = React.createContext({ forest: [] });
 
 function App() {
 
-    const [forest, setForest] = useState(getTree());
+    const [forest, setForest] = useState(getForest());
 
     const handleOpenOrClose = (id) => {
         setForest(forest.map(it => {
