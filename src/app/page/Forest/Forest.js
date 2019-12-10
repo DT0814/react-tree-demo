@@ -6,7 +6,7 @@ import { TreeContext } from "../../App";
 
 export default function Forest() {
     const { forest, toggleAllTree } = useContext(TreeContext);
-    const OpenOrCloseText = forest.some(it => it.open) ? "close" : "open";
+    const OpenOrCloseText = forest.some(it => it.open) ? "closeAll" : "openAll";
 
     return (
         <div className="forest-div">

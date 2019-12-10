@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import Forest from "./page/Forest/Forest";
+import ShowFiles from "./page/ShowFiles/ShowFiles";
 import { getTree } from "../utils/getTree";
 
 export const TreeContext = React.createContext({ forest: [] });
@@ -40,12 +41,11 @@ function App() {
     };
 
     const handleCheck = (id) => {
-        const map = forest.map(it => {
+        setForest(forest.map(it => {
             return updateCheckById(it, id);
-        });
-        console.log(map);
-        setForest(map);
+        }));
     };
+
     const updateCheckById = (treeData, id) => {
         if (treeData.children.length > 0) {
             const children = treeData.children.map(childrenData => {
@@ -57,22 +57,14 @@ function App() {
                 }
                 return { ...treeData, children: children, check: false };
             }
-            if (treeData.id === id) {
-                return { ...treeData, check: true };
-            } else if (treeData.check === true) {
-                return { ...treeData, check: false }
-            } else {
-                return treeData;
-            }
         }
-        if (treeData.check === true) {
-            return { ...treeData, check: false }
-        }
-
         if (treeData.id === id) {
-            return { ...treeData, check: true };
+            return { ...(treeData), check: true };
+        } else if (treeData.check === true) {
+            return { ...(treeData), check: false }
+        } else {
+            return treeData;
         }
-        return treeData;
     };
 
     const toggleAllTree = () => {
@@ -95,7 +87,10 @@ function App() {
 
     return (
         <TreeContext.Provider value={{ forest, handleOpenOrClose, toggleAllTree, handleCheck }}>
-            <Forest/>
+            <div className="body-div">
+                <Forest/>
+                <ShowFiles/>
+            </div>
         </TreeContext.Provider>
     );
 }

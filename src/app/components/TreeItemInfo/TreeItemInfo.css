@@ -1,19 +1,5 @@
-img {
-    width: 20px;
-    height: 20px;
-    margin: 0 auto;
-    vertical-align: middle;
-}
-
-span {
-    float: left;
-    font-size: 25px;
-    line-height: 45px;
-    margin-right: 20px;
-}
-
 .tree-info-div {
-    min-width: 30px;
+    width: 200px;
     line-height: 45px;
     padding: 5px;
     vertical-align: middle;
@@ -23,13 +9,31 @@ span {
     cursor: pointer
 }
 
+.tree-info-div img {
+    width: 20px;
+    height: 20px;
+    margin: 0 auto;
+    vertical-align: middle;
+}
+
 .file-img-div {
     float: left;
     text-align: center;
     margin-right: 10px;
 }
 
+span {
+    float: left;
+    font-size: 22px;
+    line-height: 45px;
+    min-width: 60%;
+}
+
+.close-or-open-div {
+    text-align: right;
+}
+
 .tree-item-div-check {
-    border: green solid 2px ;
+    border: green solid 2px;
     border-radius: 8px;
 }

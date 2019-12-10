@@ -1,0 +1,6 @@
+.show-files-div{
+    background-color: gold;
+    width: 100%;
+    flex: 7;
+    padding: 20px;
+}

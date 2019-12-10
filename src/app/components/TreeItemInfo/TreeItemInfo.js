@@ -7,17 +7,16 @@ import './TreeItemInfo.css'
 import { TreeContext } from "../../App";
 
 const TreeItemInfo = (props) => {
-    const { showChildren, text, treeId,check } = props;
+    const { showChildren, text, treeId, check } = props;
     const { handleOpenOrClose, handleCheck } = useContext(TreeContext);
     const treeItemChecked = check ? "tree-item-div-check" : "";
 
-    const handleClickOpenOrClose =(e)=>{
+    const handleClickOpenOrClose = (e) => {
         e.stopPropagation();
         handleOpenOrClose(treeId);
     };
 
-    const handleClickCheck =(e)=>{
-        e.stopPropagation();
+    const handleClickCheck = (e) => {
         handleCheck(treeId);
     };
     return (
@@ -26,8 +25,10 @@ const TreeItemInfo = (props) => {
                 {showChildren ? <img src={closeFolder} alt={''}/> : <img src={openFolder} alt={''}/>}
             </div>
             <span>{text}</span>
-            <div onClick={handleClickOpenOrClose}>
-                {showChildren ? <img src={closeImg} alt={''}/> : <img src={openImg} alt={''}/>}
+            <div className="close-or-open-div">
+                {showChildren
+                    ? <img onClick={handleClickOpenOrClose} src={closeImg} alt={''}/>
+                    : <img onClick={handleClickOpenOrClose} src={openImg} alt={''}/>}
             </div>
         </div>
     );
