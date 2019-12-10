@@ -9,26 +9,34 @@ function App() {
 
     const [forest, setForest] = useState(getTree());
 
-    const handleUpdateData = (id, isOpen) => {
+    const handleUpdateData = (id) => {
         setForest(forest.map(it => {
-            return updateTreeDataById(it, id, isOpen, 1);
+            return updateTreeDataById(it, id);
         }));
     };
 
-    const updateTreeDataById = (treeData, id, isOpen) => {
-        if (treeData.id === id) {
-            return { ...treeData, open: isOpen };
-        }
-        if (treeData.children.length > 0) {
-            const children = treeData.children.map(childrenTreeData => {
-                return updateTreeDataById(childrenTreeData, id, isOpen);
-            });
-
-            if (children.some((it, index) => it !== treeData.children[index])) {
-                return { ...treeData, children: children }
+    const findAndReturn = (array, iterator, assert) => {
+        for (const item in array) {
+            const result = iterator(array[item]);
+            if (assert(result, array[item])) {
+                return result;
             }
         }
-        return treeData;
+        return null;
+    };
+
+    const updateTreeDataById = (treeData, id) => {
+        if (treeData.id === id) {
+            return { ...treeData, open: !treeData.open };
+        }
+        const targetChild = findAndReturn(treeData.children, it => updateTreeDataById(it, id), (a, b) => (a !== b));
+        if (targetChild === null) {
+            return treeData;
+        }
+        return {
+            ...treeData,
+            children: treeData.children.map(child => child.id === targetChild.id ? targetChild : child),
+        };
     };
 
     const openCloseAllTree = () => {
@@ -50,7 +58,7 @@ function App() {
     };
 
     return (
-        <TreeContext.Provider value={{ forest, setForest, handlerUpdateData: handleUpdateData, openCloseAllTree }}>
+        <TreeContext.Provider value={{ forest, handleUpdateData, openCloseAllTree }}>
             <Forest/>
         </TreeContext.Provider>
     );

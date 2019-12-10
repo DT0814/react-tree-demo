@@ -11,7 +11,7 @@ function TreeItem({ data }) {
         <div className="tree-item-div">
             <TreeItemInfo
                 handlerClick={(isOpen) => {
-                    context.handlerUpdateData(data.id,isOpen);
+                    context.handleUpdateData(data.id,isOpen);
                 }}
                 showChildren={data.open}
                 text={data.name}
