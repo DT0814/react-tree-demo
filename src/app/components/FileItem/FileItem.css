@@ -1,0 +1,27 @@
+.file-item-div {
+    float: left;
+    width: 140px;
+    height: 120px;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.file-item-div img {
+    width: 60px;
+    height: 60px;
+}
+
+.file-item-div span {
+    font-size: 13px;
+    width: 100%;
+    line-height: 20px;
+    display: block;
+}
+
+.file-item-div-choose {
+    background-color: cornflowerblue;
+    border-radius: 5px;
+}

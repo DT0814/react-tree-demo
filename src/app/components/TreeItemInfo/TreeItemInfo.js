@@ -4,23 +4,22 @@ import openFolder from '../../resource/openFolder.png'
 import closeImg from '../../resource/close.png'
 import openImg from '../../resource/open.png'
 import './TreeItemInfo.css'
-import { TreeContext } from "../../App";
+import { SysContext } from "../../App";
 
 const TreeItemInfo = (props) => {
-    const { showChildren, text, treeId, check } = props;
-    const { handleOpenOrClose, handleCheck } = useContext(TreeContext);
-    const treeItemChecked = check ? "tree-item-div-check" : "";
+    const { showChildren, text, treeId } = props;
+    const { handleOpenOrClose, handleChoose } = useContext(SysContext);
 
-    const handleClickOpenOrClose = (e) => {
-        e.stopPropagation();
+    const handleClickOpenOrClose = (event) => {
+        event.stopPropagation();
         handleOpenOrClose(treeId);
     };
 
-    const handleClickCheck = (e) => {
-        handleCheck(treeId);
+    const handleClickChoose = (e) => {
+        handleChoose(treeId);
     };
     return (
-        <div className={`tree-info-div ${treeItemChecked}`} onClick={handleClickCheck}>
+        <div className="tree-info-div" onClick={handleClickChoose}>
             <div className="file-img-div">
                 {showChildren ? <img src={closeFolder} alt={''}/> : <img src={openFolder} alt={''}/>}
             </div>

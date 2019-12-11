@@ -1,19 +1,23 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import TreeItemInfo from "../TreeItemInfo/TreeItemInfo";
 import './TreeItem.css'
 
-const TreeItem=({ data }) => {
+const TreeItem = ({ data }) => {
     const children = data.children;
     const className = data.open ? "tree-children-show" : "";
+    const treeItemChoose = data.choose ? "tree-item-div-choose" : "";
+
     return (
-        <div className="tree-item-div">
-            <TreeItemInfo
-                showChildren={data.open}
-                text={data.name}
-                treeId={data.id}
-                check={data.check}
-                key={data.id + "TreeItemInfo"}
-            />
+        <Fragment>
+            <div className={`tree-item-div ${treeItemChoose}`}>
+                <TreeItemInfo
+                    showChildren={data.open}
+                    text={data.name}
+                    treeId={data.id}
+                    choose={data.choose}
+                    key={data.id + "TreeItemInfo"}
+                />
+            </div>
             <div key={data.id + "div"}
                  className={`tree-children-div ${className}`}>
                 {
@@ -22,8 +26,9 @@ const TreeItem=({ data }) => {
                         data={item}/>)
                 }
             </div>
-        </div>
+        </Fragment>
+
     );
-}
+};
 
 export default TreeItem;

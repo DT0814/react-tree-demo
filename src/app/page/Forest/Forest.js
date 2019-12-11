@@ -1,11 +1,10 @@
 import React, { useContext } from 'react';
 import TreeItem from "../../components/TreeItem/TreeItem";
 import "./Forest.css"
-import { TreeContext } from "../../App";
-
+import { SysContext } from "../../App";
 
 const Forest = () => {
-    const { forest, toggleAllTree } = useContext(TreeContext);
+    const { forest, toggleAllTree } = useContext(SysContext);
     const OpenOrCloseText = forest.some(it => it.open) ? "closeAll" : "openAll";
 
     return (
