@@ -12,6 +12,7 @@ const ShowFiles = () => {
     const [lastClickIndex, setLastClickIndex] = useState(0);
 
     const handleClick = (event, index) => {
+        event.stopPropagation();
         const copyChooseIndex = chooseIndex;
         if (event.metaKey) {
             if (copyChooseIndex.indexOf(index) !== -1) {
@@ -54,7 +55,7 @@ const ShowFiles = () => {
         setLastClickIndex(0);
     }, [context.currentFiles]);
 
-    return <div className="show-files-div">
+    return <div className="show-files-div" onClick={() => updateFileChooseAndChooseIndex([])}>
         {
             files.map(file => {
                 return <FileItem handleClick={handleClick} file={file}/>
