@@ -1,68 +1,59 @@
 import React, { useContext, useEffect, useState } from "react";
-import remove from 'lodash/remove'
+import { last, range, remove } from 'lodash'
 import './ShowFiles.css'
 import { SysContext } from "../../App";
 import FileItem from "../../components/FileItem/FileItem";
 
-const supportKeys = ['Meta', 'Shift'];
 const ShowFiles = () => {
     const context = useContext(SysContext);
-    const [pressKeys, setPressKeys] = useState([]);
     const [chooseIndex, setChooseIndex] = useState([]);
     const [files, setFiles] = useState([]);
-    const keyboardEvent = (event) => {
-        const keyName = event.key;
-        if (supportKeys.indexOf(keyName) !== -1) {
-            console.log(event);
-            if (event.type === "keydown") {
-                const copyPressKeys = pressKeys;
-                copyPressKeys.push(keyName);
-                setPressKeys(copyPressKeys);
+    const [commandLastClickIndex, setCommandLastClickIndex] = useState(0);
+    const [lastClickIndex, setLastClickIndex] = useState(0);
+
+    const handleClick = (event, index) => {
+        const copyChooseIndex = chooseIndex;
+        if (event.metaKey) {
+            if (copyChooseIndex.indexOf(index) !== -1) {
+                remove(copyChooseIndex, (it) => it === index);
+            } else {
+                copyChooseIndex.push(index);
             }
-            if (event.type === "keyup") {
-                const newPressKeys = remove(pressKeys, (it) => it !== keyName);
-                console.log(newPressKeys);
-                setPressKeys(newPressKeys);
-            }
-            console.log(pressKeys);
-        }
-    };
-    const handleClick = (index) => {
-        console.log(pressKeys);
-        if (pressKeys.indexOf("Meta") !== -1) {
-            const copyChooseIndex= chooseIndex;
-            copyChooseIndex.push(index);
-            setFiles(files.map((it) => {
-                if (copyChooseIndex.indexOf(it.index) !== -1) {
-                    return { ...it, choose: true };
-                }
-                if (it.choose !== false) {
-                    return { ...it, choose: false };
-                }
-                return it;
-            }));
-            setChooseIndex(copyChooseIndex);
+            setCommandLastClickIndex(index);
+        } else if (event.shiftKey) {
+            const preChooseIndex = range(commandLastClickIndex, lastClickIndex);
+            preChooseIndex.push(lastClickIndex);
+            remove(copyChooseIndex, (it) => preChooseIndex.indexOf(it) !== -1);
+            copyChooseIndex.push(...range(commandLastClickIndex, index), index);
         } else {
-            setFiles(files.map((it) => {
-                if (index === it.index) {
-                    return { ...it, choose: true };
-                }
-                if (it.choose !== false) {
-                    return { ...it, choose: false };
-                }
-                return it;
-            }));
-            setChooseIndex([index]);
+            remove(copyChooseIndex, () => true);
+            copyChooseIndex.push(index);
+            setCommandLastClickIndex(index);
         }
+        setLastClickIndex(index);
+        updateFileChooseAndChooseIndex(copyChooseIndex)
+    };
+
+    const updateFileChooseAndChooseIndex = (chooseIndex) => {
+        setFiles(files.map((it) => {
+            if (chooseIndex.indexOf(it.index) !== -1) {
+                return { ...it, choose: true };
+            }
+            if (it.choose !== false) {
+                return { ...it, choose: false };
+            }
+            return it;
+        }));
+        setChooseIndex(chooseIndex);
     };
 
     useEffect(() => {
-        window.addEventListener("keydown", keyboardEvent);
-        window.addEventListener("keyup", keyboardEvent);
-    }, []);
-    useEffect(() => {
-        setFiles(context.currentFiles)
+        setFiles(context.currentFiles);
+        setChooseIndex([]);
+        setCommandLastClickIndex(0);
+        setLastClickIndex(0);
     }, [context.currentFiles]);
+
     return <div className="show-files-div">
         {
             files.map(file => {

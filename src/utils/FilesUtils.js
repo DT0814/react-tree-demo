@@ -46,7 +46,7 @@ const generateFile = (id, index) => {
     };
 };
 const generateName = (type) => {
-    const name = range(1, getRandom(5, 10));
+    const name = range(1, getRandom(5, 40));
     return name.map(() => characters[getRandom(0, characters.length - 1)]).join('') + `.${type}`;
 };
 

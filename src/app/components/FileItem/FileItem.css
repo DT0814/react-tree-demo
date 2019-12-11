@@ -1,12 +1,13 @@
 .file-item-div {
     float: left;
     width: 140px;
-    height: 120px;
+    padding: 10px 0;
     text-align: center;
     vertical-align: middle;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    margin: 10px;
 }
 
 .file-item-div img {
@@ -19,9 +20,15 @@
     width: 100%;
     line-height: 20px;
     display: block;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    max-width:100%;
 }
 
 .file-item-div-choose {
     background-color: cornflowerblue;
     border-radius: 5px;
+    color: white;
 }
+

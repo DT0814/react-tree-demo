@@ -44,7 +44,7 @@ function App() {
     };
 
     const handleChoose = (id) => {
-        if (id!==currentId){
+        if (id !== currentId) {
             setCurrentFiles(getFilesByFolderId(id));
             setCurrentId(id);
         }
@@ -91,11 +91,9 @@ function App() {
         }
         return copyTreeData;
     };
-    const chooseFile  = (indexs)=>{
-        console.log(indexs);
-    };
     return (
-        <SysContext.Provider value={{ forest, handleOpenOrClose, toggleAllTree,  handleChoose, currentFiles,chooseFile }}>
+        <SysContext.Provider
+            value={{ forest, handleOpenOrClose, toggleAllTree, handleChoose, currentFiles }}>
             <div className="body-div">
                 <Forest/>
                 <ShowFiles/>
