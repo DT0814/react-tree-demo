@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { range } from 'lodash'
 import './ShowFiles.css'
 import { SysContext } from "../../App";
@@ -6,43 +6,45 @@ import FileItem from "../../components/FileItem/FileItem";
 
 const ShowFiles = () => {
     const context = useContext(SysContext);
-    const [chooseState, setChooseState] = useState({ indexArray: [], shiftStartIndex: 0 });
-
-    const handleClick = (event, currentClickIndex) => {
+    const [chosenState, setChosenState] = useState({ chosenFileId: [], shiftStartIndex: 0 });
+    const handleClick = (event, currentClickIndex, fileId) => {
         event.stopPropagation();
         if (event.metaKey) {
-            if (chooseState.indexArray.includes(currentClickIndex)) {
-                setChooseState({
-                    indexArray: chooseState.indexArray.filter((it) => it !== currentClickIndex),
+            if (chosenState.chosenFileId.includes(fileId)) {
+                setChosenState({
+                    chosenFileId: chosenState.chosenFileId.filter((it) => it !== fileId),
                     shiftStartIndex: currentClickIndex
                 });
             } else {
-                setChooseState({
-                    indexArray: [...chooseState.indexArray, currentClickIndex],
+                setChosenState({
+                    chosenFileId: [...chosenState.chosenFileId, fileId],
                     shiftStartIndex: currentClickIndex
                 });
             }
         } else if (event.shiftKey) {
-            setChooseState({
-                ...chooseState,
-                indexArray: [...range(chooseState.shiftStartIndex, currentClickIndex),currentClickIndex]
+            const ids = range(chosenState.shiftStartIndex, currentClickIndex).map((it)=>{
+                return context.currentFiles[it].id;
+            });
+            setChosenState({
+                ...chosenState,
+                chosenFileId: [...ids,context.currentFiles[currentClickIndex].id]
             });
         } else {
-            setChooseState({
-                indexArray: [currentClickIndex],
+            setChosenState({
+                chosenFileId: [fileId],
                 shiftStartIndex: currentClickIndex,
             });
         }
     };
 
     const handleClickWhiteSpace = () => {
-        setChooseState({ indexArray: [], shiftStartIndex: 0 });
+        setChosenState({ chosenFileId: [], shiftStartIndex: 0 });
     }
 
     return <div className="show-files-div" onClick={handleClickWhiteSpace}>
         {
             context.currentFiles.map(file => {
-                const isChoose = chooseState.indexArray.includes(file.index);
+                const isChoose = chosenState.chosenFileId.includes(file.id);
                 return <FileItem handleClick={handleClick} file={file} isChoose={isChoose} />
             })
         }

@@ -10,6 +10,7 @@ import ppt from '../app/resource/filesIcon/ppt.png'
 import txt from '../app/resource/filesIcon/txt.png'
 import video from '../app/resource/filesIcon/video.png'
 import zip from '../app/resource/filesIcon/zip.png'
+import { getUUID } from './UUID'
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,".split('');
 const types = ['excel', 'gif', 'jpeg', 'mp3', 'pdf', 'png', 'ppt', 'txt', 'video', 'zip', 'cannot-identify'];
@@ -37,6 +38,7 @@ const generateType = () => {
 const generateFile = (id, index) => {
     const type = generateType();
     return {
+        id: getUUID(),
         index: index,
         name: generateName(type),
         size: getRandom(1, 100000) / 1000 + 'kb',
