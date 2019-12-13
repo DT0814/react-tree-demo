@@ -4,11 +4,11 @@ import openFolder from '../../resource/openFolder.png'
 import closeImg from '../../resource/close.png'
 import openImg from '../../resource/open.png'
 import './TreeItemInfo.css'
-import { SysContext } from "../../App";
+import { ForestContext } from "../../page/Forest/Forest";
 
 const TreeItemInfo = (props) => {
     const { showChildren, text, treeId } = props;
-    const { handleOpenOrClose, handleChoose } = useContext(SysContext);
+    const { handleOpenOrClose, handleChoose } = useContext(ForestContext);
 
     const handleClickOpenOrClose = (event) => {
         event.stopPropagation();

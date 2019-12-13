@@ -8,3 +8,48 @@
     border-radius: 5px;
     text-align: center;
 }
+.show-files-menu {
+    text-align:left;
+    margin-left: 60px;
+}
+.show-files-menu button {
+    border-style: none;
+    width: 60px;
+    height: 30px;
+}
+
+.show-files-menu-delete  {
+    background-color: red;
+    color:white;
+    border-radius: 0 5px 5px 0;
+    cursor: grab;
+}
+.show-files-menu-copy  {
+    background-color: darkgreen;
+    color:white;
+    cursor: copy;
+}
+.show-files-menu-move  {
+    background-color: coral;
+    color:white;
+    border-radius: 5px 0 0 5px;
+    cursor: move;
+}
+
+
+.show-files-menu-delete  {
+    background-color: gray;
+    color:white;
+    border-radius: 0 5px 5px 0;
+}
+
+.show-files-menu-copy-delete {
+    background-color: gray;
+    color:white;
+}
+
+.show-files-menu-move-delete {
+    background-color: gray;
+    color:white;
+    border-radius: 5px 0 0 5px;
+}

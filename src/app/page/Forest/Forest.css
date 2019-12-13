@@ -1,9 +1,10 @@
 .forest-div {
-    width: 200px;
+    max-width: 200px;
     min-height: 800px;
     height: 100%;
     padding: 20px 10px 20px 0;
     float: left;
+    flex: 2;
 }
 
 .forest-header-div {
@@ -14,11 +15,11 @@
 .forest-header-div button {
     border-style: none;
     background-color: #FFAA00;
-    color: black;
-    font-size: 17px;
+    color: white;
+    font-size: 12px;
     border-radius: 8px;
-    width: 80px;
-    height: 40px;
+    width: 60px;
+    height: 30px;
     bottom: 0;
     cursor: pointer;
 }
