@@ -1,43 +1,86 @@
 import React, { useContext, useEffect, useState } from "react";
-import { last, range, remove } from 'lodash'
+import { last, range, remove, indexOf, reverse, min, sortBy, max } from 'lodash'
 import './ShowFiles.css'
 import { SysContext } from "../../App";
 import FileItem from "../../components/FileItem/FileItem";
 
 const ShowFiles = () => {
     const context = useContext(SysContext);
-    const [chooseIndex, setChooseIndex] = useState([]);
+    const [chooseState, setChooseState] = useState({ indexArray: [], shiftStartIndex: 0, lastClickIndex: 0 });
     const [files, setFiles] = useState([]);
-    const [commandLastClickIndex, setCommandLastClickIndex] = useState(0);
-    const [lastClickIndex, setLastClickIndex] = useState(0);
 
-    const handleClick = (event, index) => {
-        event.stopPropagation();
-        const copyChooseIndex = chooseIndex;
-        if (event.metaKey) {
-            if (copyChooseIndex.indexOf(index) !== -1) {
-                remove(copyChooseIndex, (it) => it === index);
-            } else {
-                copyChooseIndex.push(index);
-            }
-            setCommandLastClickIndex(index);
-        } else if (event.shiftKey) {
-            const preChooseIndex = range(commandLastClickIndex, lastClickIndex);
-            preChooseIndex.push(lastClickIndex);
-            remove(copyChooseIndex, (it) => preChooseIndex.indexOf(it) !== -1);
-            copyChooseIndex.push(...range(commandLastClickIndex, index), index);
+    const calculationShiftStartIndex = (indexArray, currentClickIndex) => {
+        const thanCurrentClickIndex = indexArray.filter((it) => it >= currentClickIndex);
+        const minThanCurrentClickIndex = min(thanCurrentClickIndex);
+        return minThanCurrentClickIndex === undefined ? max(indexArray) : minThanCurrentClickIndex;
+    }
+
+    const calculationLastClickIndex = (indexArray, currentClickIndex) => {
+        const thanCurrentClickIndex = indexArray.filter((it) => it >= currentClickIndex);
+        if (thanCurrentClickIndex.length > 0) {
+            const thanCurrentClickIndexMaxContinuous = thanCurrentClickIndex.find((it, index) => {
+                if (index + 1 < thanCurrentClickIndex.length) {
+                    return (thanCurrentClickIndex[index + 1] - it) !== 1;
+                }
+                return false;
+            });
+            return thanCurrentClickIndexMaxContinuous === undefined ? max(indexArray) : thanCurrentClickIndexMaxContinuous;
         } else {
-            remove(copyChooseIndex, () => true);
-            copyChooseIndex.push(index);
-            setCommandLastClickIndex(index);
+            const lessCurrentClickIndex = indexArray;
+            const lessCurrentClickIndexMaxContinuous = reverse(lessCurrentClickIndex).find((it, index) => {
+                if (index + 1 < lessCurrentClickIndex.length) {
+                    return (it - lessCurrentClickIndex[index + 1]) !== 1;
+                }
+                return false;
+            });
+            return lessCurrentClickIndexMaxContinuous === undefined ? min(indexArray) : lessCurrentClickIndexMaxContinuous;
         }
-        setLastClickIndex(index);
-        updateFileChooseAndChooseIndex(copyChooseIndex)
+    }
+
+    const handleClick = (event, currentClickIndex) => {
+        event.stopPropagation();
+        const copyChooseState = chooseState;
+        if (event.metaKey) {
+            if (copyChooseState.indexArray.indexOf(currentClickIndex) !== -1) {
+                remove(copyChooseState.indexArray, (it) => it === currentClickIndex);
+            } else {
+                copyChooseState.indexArray.push(currentClickIndex);
+            }
+            const isChoose = indexOf(copyChooseState.indexArray, currentClickIndex) !== -1;
+            const shiftStartIndex = isChoose
+                ? currentClickIndex
+                : calculationShiftStartIndex(copyChooseState.indexArray, currentClickIndex);
+            const lastClickIndex = isChoose
+                ? currentClickIndex
+                : calculationLastClickIndex(copyChooseState.indexArray, currentClickIndex);
+            setChooseState({ indexArray: sortBy(copyChooseState.indexArray), shiftStartIndex, lastClickIndex });
+
+        } else if (event.shiftKey) {
+            const oldChooseIndexArray = range(copyChooseState.shiftStartIndex, copyChooseState.lastClickIndex);
+            oldChooseIndexArray.push(copyChooseState.lastClickIndex);
+
+            remove(copyChooseState.indexArray, (it) => oldChooseIndexArray.indexOf(it) !== -1);
+
+            copyChooseState.indexArray.push(...range(copyChooseState.shiftStartIndex, currentClickIndex), currentClickIndex);
+
+            setChooseState({ ...copyChooseState, indexArray: sortBy(copyChooseState.indexArray), lastClickIndex: currentClickIndex });
+
+        } else {
+
+            remove(copyChooseState.indexArray, () => true);
+
+            copyChooseState.indexArray.push(currentClickIndex);
+
+            setChooseState({ indexArray: sortBy(copyChooseState.indexArray), shiftStartIndex: currentClickIndex, lastClickIndex: currentClickIndex });
+
+        }
+
+        updateFileChooseAndChooseState(copyChooseState.indexArray)
     };
 
-    const updateFileChooseAndChooseIndex = (chooseIndex) => {
+    const updateFileChooseAndChooseState = (indexArray) => {
         setFiles(files.map((it) => {
-            if (chooseIndex.indexOf(it.index) !== -1) {
+            if (indexArray.indexOf(it.index) !== -1) {
                 return { ...it, choose: true };
             }
             if (it.choose !== false) {
@@ -45,20 +88,24 @@ const ShowFiles = () => {
             }
             return it;
         }));
-        setChooseIndex(chooseIndex);
     };
 
+    const initState = () => {
+        setChooseState({ indexArray: [], shiftStartIndex: 0, lastClickIndex: 0 });
+    }
     useEffect(() => {
-        setFiles(context.currentFiles);
-        setChooseIndex([]);
-        setCommandLastClickIndex(0);
-        setLastClickIndex(0);
+        initState();
+        setFiles(context.currentFiles.map((it, index) => { return { ...it, index: index } }));
     }, [context.currentFiles]);
 
-    return <div className="show-files-div" onClick={() => updateFileChooseAndChooseIndex([])}>
+    const handleClickWhiteSpace = () => {
+        initState();
+        updateFileChooseAndChooseState([]);
+    }
+    return <div className="show-files-div" onClick={handleClickWhiteSpace}>
         {
             files.map(file => {
-                return <FileItem handleClick={handleClick} file={file}/>
+                return <FileItem handleClick={handleClick} file={file} />
             })
         }
     </div>

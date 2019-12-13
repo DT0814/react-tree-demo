@@ -34,10 +34,9 @@ const generateType = () => {
     return types[getRandom(0, types.length - 1)];
 };
 
-const generateFile = (id, index) => {
+const generateFile = (id) => {
     const type = generateType();
     return {
-        index: index,
         name: generateName(type),
         size: getRandom(1, 100000) / 1000 + 'kb',
         folderId: id,
@@ -52,8 +51,8 @@ const generateName = (type) => {
 
 export const getFilesByFolderId = (id) => {
     const files = range(1, getRandom(15, 30));
-    const map = files.map((it, index) => {
-        return generateFile(id, index)
+    const map = files.map((it) => {
+        return generateFile(id)
     });
     return map;
 };
