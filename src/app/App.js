@@ -96,7 +96,7 @@ function App() {
             value={{ forest, handleOpenOrClose, toggleAllTree, handleChoose, currentFiles }}>
             <div className="body-div">
                 <Forest/>
-                <ShowFiles/>
+                <ShowFiles key={currentId}/>
             </div>
         </SysContext.Provider>
     );
