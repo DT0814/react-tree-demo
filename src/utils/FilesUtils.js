@@ -35,11 +35,10 @@ const generateType = () => {
     return types[getRandom(0, types.length - 1)];
 };
 
-const generateFile = (id, index) => {
+const generateFile = (id) => {
     const type = generateType();
     return {
         id: getUUID(),
-        index: index,
         name: generateName(type),
         size: getRandom(1, 100000) / 1000 + 'kb',
         folderId: id,
@@ -56,9 +55,23 @@ export const getFilesByFolderId = (id) => {
     if(filesMap.has(id)){
         return filesMap.get(id);
     }
-    const files = range(1, getRandom(15, 30)).map((it, index) => {
-        return generateFile(id, index)
+    const files = range(1, getRandom(4, 8)).map(it => {
+        return generateFile(id)
     });
     filesMap.set(id,files);
     return files;
+};
+
+export const moveFiles = (files,toFolderID,currentId) => {
+    const filesId = files.map(it => it.id);
+    filesMap.set(currentId,filesMap.get(currentId).filter(it => !filesId.includes(it.id)));
+    console.log(filesMap.get(currentId).filter(it => !files.includes(it.id)));
+    if(filesMap.has(toFolderID)){
+        filesMap.set(toFolderID,[...filesMap.get(toFolderID),...files]);
+    }else {
+        const toFolderFiles = range(1, getRandom(4, 8)).map(it => {
+                return generateFile(toFolderID)
+            });
+        filesMap.set(toFolderID,[...toFolderFiles,...files]);
+    }
 };

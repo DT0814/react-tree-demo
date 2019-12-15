@@ -5,7 +5,7 @@ import { SysContext } from "../../App";
 
 export const ForestContext = React.createContext();
 
-const Forest = ({ initForest, onHandleChoose= ()=>{} }) => {
+const Forest = ({ initForest, onHandleChoose= ()=>{}, onClickFolder= ()=>{} }) => {
     const [forest, setForest] = useState(initForest);
 
     const OpenOrCloseText = forest.some(it => it.open) ? "closeAll" : "openAll";
@@ -81,7 +81,8 @@ const Forest = ({ initForest, onHandleChoose= ()=>{} }) => {
     };
 
     const handleChoose = (id) => {
-        onHandleChoose(id)
+        onHandleChoose(id);
+        onClickFolder(id);
         setForest(forest.map(it => {
             return updateChooseById(it, id);
         }));
