@@ -65,7 +65,6 @@ export const getFilesByFolderId = (id) => {
 export const moveFiles = (files,toFolderID,currentId) => {
     const filesId = files.map(it => it.id);
     filesMap.set(currentId,filesMap.get(currentId).filter(it => !filesId.includes(it.id)));
-    console.log(filesMap.get(currentId).filter(it => !files.includes(it.id)));
     if(filesMap.has(toFolderID)){
         filesMap.set(toFolderID,[...filesMap.get(toFolderID),...files]);
     }else {
@@ -76,9 +75,17 @@ export const moveFiles = (files,toFolderID,currentId) => {
     }
 };
 
-export const copyFiles = (files,currentId) => {
+export const copyFiles = (files,toFolderId,currentId) => {
     const newFiles = files.map(it => {return {...it,id:getUUID()}});
-    filesMap.set(currentId,[...filesMap.get(currentId),...newFiles]);
+    if(filesMap.has(toFolderId)){
+            filesMap.set(toFolderId,[...filesMap.get(toFolderId),...newFiles]);
+        }else {
+            const toFolderFiles = range(1, getRandom(4, 8)).map(it => {
+                    return generateFile(toFolderId)
+                });
+            filesMap.set(toFolderId,[...toFolderFiles,...newFiles]);
+        }
+    return newFiles;
 };
 
 export const deleteFiles = (files,currentId) => {

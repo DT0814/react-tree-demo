@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import {Modal} from 'antd';
+import React, { useContext, useState, useEffect } from "react";
+import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import { range } from 'lodash'
 import './ShowFiles.css'
@@ -8,11 +8,19 @@ import FileItem from "../../components/FileItem/FileItem";
 import Forest from "../Forest/Forest";
 import { getForest } from "../../../utils/ForestUtils";
 
-const ShowFiles = ({moveFilesToFolder,deleteFiles,copyFiles}) => {
+const ShowFiles = ({ moveFilesToFolder, deleteFiles, copyFilesToFolder }) => {
     const context = useContext(SysContext);
+    const files = context.currentFiles.files.map((it, index) => {
+        return { ...it, index };
+    })
     const [chosenState, setChosenState] = useState({ chosenFileId: context.currentFiles.chosenFiles.map(it => it.id), shiftStartIndex: 0 });
-    const [showMoveModal, setShowMoveModal] = useState(false);
-    const [moveMessage, setMoveMessage] = useState({moveToFolderId:-1,files:[]});
+    const [showModal, setShowModal] = useState(false);
+    const [message, setMessage] = useState({ toFolderId: -1, files: [] });
+
+    const [confirmLoading,setConfirmLoading] = useState(false);
+    useEffect(() => {
+        setChosenState({ chosenFileId: context.currentFiles.chosenFiles.map(it => it.id), shiftStartIndex: 0 });
+    }, [context.currentFiles.chosenFiles])
 
     const handleClick = (event, currentClickIndex, fileId) => {
         event.stopPropagation();
@@ -29,12 +37,12 @@ const ShowFiles = ({moveFilesToFolder,deleteFiles,copyFiles}) => {
                 });
             }
         } else if (event.shiftKey) {
-            const ids = range(chosenState.shiftStartIndex, currentClickIndex).map((it)=>{
-                return context.currentFiles.files[it].id;
+            const ids = range(chosenState.shiftStartIndex, currentClickIndex).map((it) => {
+                return files[it].id;
             });
             setChosenState({
                 ...chosenState,
-                chosenFileId: [...ids,context.currentFiles.files[currentClickIndex].id]
+                chosenFileId: [...ids, files[currentClickIndex].id]
             });
         } else {
             setChosenState({
@@ -43,40 +51,58 @@ const ShowFiles = ({moveFilesToFolder,deleteFiles,copyFiles}) => {
             });
         }
     };
-    const files = context.currentFiles.files.map((it,index) => {
-        return {...it,index};
-    })
+
 
     const handleClickWhiteSpace = () => {
         setChosenState({ chosenFileId: [], shiftStartIndex: 0 });
     }
-    const handleMove = () => {
-        moveFilesToFolder(moveMessage.files,moveMessage.moveToFolderId)
+    const handleExecute = () => {
+        if(message.type === "move"){
+            moveFilesToFolder(message.files, message.toFolderId)
+        }
+        if(message.type === "copy"){
+            copyFilesToFolder(message.files, message.toFolderId)
+        }
+        setShowModal(false);
     }
 
-    const handleMoveCancel = () => {
-           setShowMoveModal(false);
+    const handleCancel = () => {
+        setShowModal(false);
     }
 
-    const handleShowMoveModal = ()=> {
-        setMoveMessage({files:files.filter(it => chosenState.chosenFileId.includes(it.id)),moveToFolderId:-1})
-        setShowMoveModal(true);
+    const handleShowMoveModal = () => {
+        setMessage({ files: files.filter(it => chosenState.chosenFileId.includes(it.id)), toFolderId: -1 ,type:"move"})
+        setShowModal(true);
     }
-
+    const handleShowCopyModal = () => {
+        setMessage({ files: files.filter(it => chosenState.chosenFileId.includes(it.id)), toFolderId: -1 ,type:"copy"})
+        setShowModal(true);
+    }
     const handleDelete = () => {
         deleteFiles(files.filter(it => chosenState.chosenFileId.includes(it.id)));
     }
 
-    const handleCopy = () => {
-        copyFiles(files.filter(it => chosenState.chosenFileId.includes(it.id)));
-    }
-
+    const moveButAble = chosenState.chosenFileId.length > 0;
+    const copyButAble = chosenState.chosenFileId.length > 0;
+    const deleteButAble = chosenState.chosenFileId.length > 0;
+    const defaultForest = getForest();
     return <div className="show-files-div" onClick={handleClickWhiteSpace}>
-
         <div className="show-files-menu">
-            <button className="show-files-menu-move" onClick={handleShowMoveModal}>move</button>
-            <button className="show-files-menu-copy" onClick={handleCopy}>copy</button>
-            <button className="show-files-menu-delete" onClick={handleDelete}>delete</button>
+            <button
+                className={moveButAble ? "show-files-menu-move" : "show-files-menu-move-disable"}
+                onClick={handleShowMoveModal}
+                disabled={!moveButAble}
+            >move</button>
+            <button
+                className={copyButAble ? "show-files-menu-copy" : "show-files-menu-copy-disable"}
+                onClick={handleShowCopyModal}
+                disabled={!copyButAble}
+            >copy</button>
+            <button
+                className={deleteButAble ? "show-files-menu-delete" : "show-files-menu-delete-disable"}
+                onClick={handleDelete}
+                disabled={!deleteButAble}
+            >delete</button>
         </div>
         {
             files.map(file => {
@@ -85,15 +111,21 @@ const ShowFiles = ({moveFilesToFolder,deleteFiles,copyFiles}) => {
             })
         }
         <Modal
-            style={{ lineHeight: 20 }}
             title="选择移动到的文件夹"
-            visible={showMoveModal}
-            onOk={handleMove}
-            onCancel={handleMoveCancel}
+            visible={showModal}
+            onOk={handleExecute}
+            onCancel={handleCancel}
+            destroyOnClose={true}
+            confirmLoading={confirmLoading}
         >
-            <Forest initForest = {getForest()}
-                onClickFolder={(moveToFolderId)=>{setMoveMessage({...moveMessage,moveToFolderId})}}
-            />
+            <div className="move-folder">
+                <Forest defaultForest={defaultForest}
+                        onClickFolder={(toFolderId) => {
+                        setConfirmLoading(toFolderId===context.currentId);
+                        setMessage({ ...message, toFolderId })
+                    }}
+                />
+            </div>
         </Modal>
     </div>
 };

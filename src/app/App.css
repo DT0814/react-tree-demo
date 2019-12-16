@@ -3,4 +3,11 @@
     height: 100%;
     min-width: 600px;
     display: flex;
+    padding: 20px;
+}
+.body-div-left {
+    flex:1;
+}
+.body-div-right {
+    flex:7;
 }
