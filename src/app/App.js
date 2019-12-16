@@ -3,7 +3,7 @@ import './App.css';
 import Forest from "./page/Forest/Forest";
 import ShowFiles from "./page/ShowFiles/ShowFiles";
 import { getForest } from "../utils/ForestUtils";
-import { getFilesByFolderId,moveFiles } from "../utils/FilesUtils";
+import { getFilesByFolderId,moveFiles,copyFiles,deleteFiles } from "../utils/FilesUtils";
 
 export const SysContext = React.createContext({ forest: [], currentFiles: [] });
 
@@ -21,12 +21,27 @@ function App() {
         setCurrentFiles({files:getFilesByFolderId(toFolderId),chosenFiles:files});
         setCurrentId(toFolderId);
     }
+
+    const onDeleteFiles = (files) => {
+        deleteFiles(files,currentId);
+        setCurrentFiles({files:getFilesByFolderId(currentId),chosenFiles:[]});
+        setCurrentId(currentId);
+    }
+
+    const onCopyFiles = (files) => {
+        copyFiles(files,currentId);
+        setCurrentFiles({files:getFilesByFolderId(currentId),chosenFiles:[]});
+        setCurrentId(currentId);
+    }
     return (
         <SysContext.Provider
             value={{ currentFiles }}>
             <div className="body-div">
                 <Forest initForest={getForest()} onHandleChoose={onHandleChoose} />
-                <ShowFiles key={currentId} moveFilesToFolder={moveFilesToFolder} />
+                <ShowFiles key={currentId}
+                    moveFilesToFolder={moveFilesToFolder}
+                    copyFiles={onCopyFiles}
+                    deleteFiles={onDeleteFiles} />
             </div>
         </SysContext.Provider>
     );

@@ -8,7 +8,7 @@ import FileItem from "../../components/FileItem/FileItem";
 import Forest from "../Forest/Forest";
 import { getForest } from "../../../utils/ForestUtils";
 
-const ShowFiles = ({moveFilesToFolder}) => {
+const ShowFiles = ({moveFilesToFolder,deleteFiles,copyFiles}) => {
     const context = useContext(SysContext);
     const [chosenState, setChosenState] = useState({ chosenFileId: context.currentFiles.chosenFiles.map(it => it.id), shiftStartIndex: 0 });
     const [showMoveModal, setShowMoveModal] = useState(false);
@@ -63,12 +63,20 @@ const ShowFiles = ({moveFilesToFolder}) => {
         setShowMoveModal(true);
     }
 
+    const handleDelete = () => {
+        deleteFiles(files.filter(it => chosenState.chosenFileId.includes(it.id)));
+    }
+
+    const handleCopy = () => {
+        copyFiles(files.filter(it => chosenState.chosenFileId.includes(it.id)));
+    }
+
     return <div className="show-files-div" onClick={handleClickWhiteSpace}>
 
         <div className="show-files-menu">
             <button className="show-files-menu-move" onClick={handleShowMoveModal}>move</button>
-            <button className="show-files-menu-copy" >copy</button>
-            <button className="show-files-menu-delete">delete</button>
+            <button className="show-files-menu-copy" onClick={handleCopy}>copy</button>
+            <button className="show-files-menu-delete" onClick={handleDelete}>delete</button>
         </div>
         {
             files.map(file => {

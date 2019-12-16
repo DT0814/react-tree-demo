@@ -75,3 +75,13 @@ export const moveFiles = (files,toFolderID,currentId) => {
         filesMap.set(toFolderID,[...toFolderFiles,...files]);
     }
 };
+
+export const copyFiles = (files,currentId) => {
+    const newFiles = files.map(it => {return {...it,id:getUUID()}});
+    filesMap.set(currentId,[...filesMap.get(currentId),...newFiles]);
+};
+
+export const deleteFiles = (files,currentId) => {
+    const filesId = files.map(it => it.id);
+    filesMap.set(currentId,filesMap.get(currentId).filter(it => !filesId.includes(it.id)) );
+};
