@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useMemo } from "react";
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import { range } from 'lodash'
@@ -82,43 +82,43 @@ const ShowFiles = ({ moveFilesToFolder, deleteFiles, copyFilesToFolder }) => {
 
     const [selectFolder, resolve, reject] = usePromise(() => () => setShowModal(true), [setShowModal]);
 
-    const handleMove = async () => {
+    const handleMove = useMemo(() => async (files) => {
         const moveFiles = files.filter(it => chosenState.chosenFileId.includes(it.id));
         try {
             const toFolderId = await selectFolder();
             moveFilesToFolder(moveFiles, toFolderId);
         } catch{
-            setShowModal(false);
         }
-    }
+        setShowModal(false);
+    }, [files])
 
-    const handleCopy = async () => {
+    const handleCopy = useMemo(() => async (files) => {
         const copyFiles = files.filter(it => chosenState.chosenFileId.includes(it.id));
         try {
             const toFolderId = await selectFolder();
             copyFilesToFolder(copyFiles, toFolderId);
         } catch{
-            setShowModal(false);
         }
-    }
+        setShowModal(false);
+    }, [files])
 
     return <div className="show-files-div" onClick={handleClickWhiteSpace}>
         <div className="show-files-menu">
             <button
                 className={moveButAble ? "show-files-menu-move" : "show-files-menu-move-disable"}
-                onClick={handleMove}
+                onClick={()=>handleMove(files)}
                 disabled={!moveButAble}
-            >move</button>
+            >Move</button>
             <button
                 className={copyButAble ? "show-files-menu-copy" : "show-files-menu-copy-disable"}
-                onClick={handleCopy}
+                onClick={()=>handleCopy(files)}
                 disabled={!copyButAble}
-            >copy</button>
+            >Copy</button>
             <button
                 className={deleteButAble ? "show-files-menu-delete" : "show-files-menu-delete-disable"}
                 onClick={handleDelete}
                 disabled={!deleteButAble}
-            >delete</button>
+            >Delete</button>
         </div>
         {
             files.map(file => {
