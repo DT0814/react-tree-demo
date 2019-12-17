@@ -12,7 +12,7 @@ function App() {
     const [currentId, setCurrentId] = useState(-1);
     const [defaultChooseId, setDefaultChooseId] = useState(-1);
     const onHandleChoose = (id) => {
-        if (id !== currentId) {
+        if (id !== defaultChooseId) {
             setCurrentFiles({ files: getFilesByFolderId(id), chosenFiles: [] });
             setCurrentId(id);
         }

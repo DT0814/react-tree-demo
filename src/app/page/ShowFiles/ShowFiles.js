@@ -7,6 +7,7 @@ import { SysContext } from "../../App";
 import FileItem from "../../components/FileItem/FileItem";
 import Forest from "../Forest/Forest";
 import { getForest } from "../../../utils/ForestUtils";
+import { usePromise } from "../../../utils/usePromise";
 
 const ShowFiles = ({ moveFilesToFolder, deleteFiles, copyFilesToFolder }) => {
     const context = useContext(SysContext);
@@ -15,9 +16,10 @@ const ShowFiles = ({ moveFilesToFolder, deleteFiles, copyFilesToFolder }) => {
     })
     const [chosenState, setChosenState] = useState({ chosenFileId: context.currentFiles.chosenFiles.map(it => it.id), shiftStartIndex: 0 });
     const [showModal, setShowModal] = useState(false);
-    const [message, setMessage] = useState({ toFolderId: -1, files: [] });
+    const [toFolderId, setToFolderId] = useState(-1);
+    const [modalPromise, setModalPromise] = useState({ resolve: () => { }, reject: () => { } });
 
-    const [confirmLoading,setConfirmLoading] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
     useEffect(() => {
         setChosenState({ chosenFileId: context.currentFiles.chosenFiles.map(it => it.id), shiftStartIndex: 0 });
     }, [context.currentFiles.chosenFiles])
@@ -56,46 +58,60 @@ const ShowFiles = ({ moveFilesToFolder, deleteFiles, copyFilesToFolder }) => {
     const handleClickWhiteSpace = () => {
         setChosenState({ chosenFileId: [], shiftStartIndex: 0 });
     }
-    const handleExecute = () => {
-        if(message.type === "move"){
-            moveFilesToFolder(message.files, message.toFolderId)
-        }
-        if(message.type === "copy"){
-            copyFilesToFolder(message.files, message.toFolderId)
-        }
-        setShowModal(false);
-    }
 
-    const handleCancel = () => {
-        setShowModal(false);
-    }
-
-    const handleShowMoveModal = () => {
-        setMessage({ files: files.filter(it => chosenState.chosenFileId.includes(it.id)), toFolderId: -1 ,type:"move"})
-        setShowModal(true);
-    }
-    const handleShowCopyModal = () => {
-        setMessage({ files: files.filter(it => chosenState.chosenFileId.includes(it.id)), toFolderId: -1 ,type:"copy"})
-        setShowModal(true);
-    }
     const handleDelete = () => {
-        deleteFiles(files.filter(it => chosenState.chosenFileId.includes(it.id)));
+        const { confirm } = Modal;
+        confirm({
+            title: 'Are you sure delete this ?',
+            content: 'Operations are not recoverable',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                deleteFiles(files.filter(it => chosenState.chosenFileId.includes(it.id)));
+            },
+            onCancel() {
+            },
+        });
     }
 
     const moveButAble = chosenState.chosenFileId.length > 0;
     const copyButAble = chosenState.chosenFileId.length > 0;
     const deleteButAble = chosenState.chosenFileId.length > 0;
     const defaultForest = getForest();
+
+    const [selectFolder, resolve, reject] = usePromise(() => () => setShowModal(true), [setShowModal]);
+
+    const handleMove = async () => {
+        const moveFiles = files.filter(it => chosenState.chosenFileId.includes(it.id));
+        try {
+            const toFolderId = await selectFolder();
+            moveFilesToFolder(moveFiles, toFolderId);
+        } catch{
+            setShowModal(false);
+        }
+    }
+
+    const handleCopy = async () => {
+        const copyFiles = files.filter(it => chosenState.chosenFileId.includes(it.id));
+        try {
+            const toFolderId = await selectFolder();
+            copyFilesToFolder(copyFiles, toFolderId);
+        } catch{
+            setShowModal(false);
+        }
+    }
+
     return <div className="show-files-div" onClick={handleClickWhiteSpace}>
         <div className="show-files-menu">
             <button
                 className={moveButAble ? "show-files-menu-move" : "show-files-menu-move-disable"}
-                onClick={handleShowMoveModal}
+                onClick={handleMove}
                 disabled={!moveButAble}
             >move</button>
             <button
                 className={copyButAble ? "show-files-menu-copy" : "show-files-menu-copy-disable"}
-                onClick={handleShowCopyModal}
+                onClick={handleCopy}
                 disabled={!copyButAble}
             >copy</button>
             <button
@@ -113,16 +129,16 @@ const ShowFiles = ({ moveFilesToFolder, deleteFiles, copyFilesToFolder }) => {
         <Modal
             title="选择移动到的文件夹"
             visible={showModal}
-            onOk={handleExecute}
-            onCancel={handleCancel}
+            onOk={() => resolve(toFolderId)}
+            onCancel={reject}
             destroyOnClose={true}
             confirmLoading={confirmLoading}
         >
             <div className="move-folder">
                 <Forest defaultForest={defaultForest}
-                        onClickFolder={(toFolderId) => {
-                        setConfirmLoading(toFolderId===context.currentId);
-                        setMessage({ ...message, toFolderId })
+                    onClickFolder={(toFolderId) => {
+                        setConfirmLoading(toFolderId === context.currentId);
+                        setToFolderId(toFolderId)
                     }}
                 />
             </div>
