@@ -1,50 +1,49 @@
 import React, { useState, useRef } from 'react';
 import './App.css';
-import Forest from "./page/Forest/Forest";
-import ShowFiles from "./page/ShowFiles/ShowFiles";
+import FolderForest from "./page/FolderForest/FolderForest";
+import FilesManger from "./page/FilesManger/FilesManger";
 import { getForest } from "../utils/ForestUtils";
-import { getFilesByFolderId, moveFiles, copyFiles, deleteFiles } from "../utils/FilesUtils";
+import { getFilesByFolderId, filesMove, filesCopy, filesDelete } from "../utils/FilesUtils";
 
 export const SysContext = React.createContext({ forest: [], currentFiles: [] });
 const forest = getForest();
 function App() {
     const [currentFiles, setCurrentFiles] = useState({ files: [], chosenFiles: [] });
     const [currentId, setCurrentId] = useState(-1);
-    const [defaultChooseId, setDefaultChooseId] = useState(-1);
-    const onHandleChoose = (id) => {
-        if (id !== defaultChooseId) {
+    const onChoose = (id) => {
+        if (id !== currentId) {
             setCurrentFiles({ files: getFilesByFolderId(id), chosenFiles: [] });
             setCurrentId(id);
         }
     }
-    const moveFilesToFolder = (files, toFolderId) => {
-        moveFiles(files, toFolderId, currentId);
-        setCurrentFiles({ files: getFilesByFolderId(toFolderId), chosenFiles: files });
-        setDefaultChooseId(toFolderId);
+    const filesMoveToFolder = (files, destFolderId) => {
+        filesMove(files, destFolderId, currentId);
+        setCurrentFiles({ files: getFilesByFolderId(destFolderId), chosenFiles: files });
+        setCurrentId(destFolderId);
     }
 
-    const onDeleteFiles = (files) => {
-        deleteFiles(files, currentId);
+    const filesDeleteByFolderId = (files) => {
+        filesDelete(files, currentId);
         setCurrentFiles({ files: getFilesByFolderId(currentId), chosenFiles: [] });
     }
 
-    const copyFilesToFolder = (files,toFolderId) => {
-        const newFiles = copyFiles(files, toFolderId ,currentId);
-        setCurrentFiles({ files: getFilesByFolderId(toFolderId), chosenFiles:newFiles });
-        setDefaultChooseId(toFolderId);
+    const copyFilesToFolder = (files,destFolderId) => {
+        const newFiles = filesCopy(files, destFolderId ,currentId);
+        setCurrentFiles({ files: getFilesByFolderId(destFolderId), chosenFiles:newFiles });
+        setCurrentId(destFolderId);
     }
     return (
         <SysContext.Provider
             value={{ currentFiles, currentId }}>
             <div className="body-div">
                 <div className="body-div-left">
-                    <Forest defaultForest={forest} onHandleChoose={onHandleChoose} defaultChooseId={defaultChooseId} />
+                    <FolderForest defaultForest={forest} onChoose={onChoose} defaultChooseId={currentId} />
                 </div>
                 <div className="body-div-right">
-                    <ShowFiles key={currentId}
-                        moveFilesToFolder={moveFilesToFolder}
-                        copyFilesToFolder={copyFilesToFolder}
-                        deleteFiles={onDeleteFiles} />
+                    <FilesManger
+                        filesMove={filesMoveToFolder}
+                        filesCopy={copyFilesToFolder}
+                        filesDelete={filesDeleteByFolderId} />
                 </div>
             </div>
         </SysContext.Provider>

@@ -1,7 +1,6 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TreeItem from "../../components/TreeItem/TreeItem";
-import "./Forest.css"
-import { SysContext } from "../../App";
+import "./FolderForest.css"
 
 const updateChooseById = (treeData, id) => {
     if (treeData.children.length > 0) {
@@ -46,7 +45,7 @@ const chooseFolderAndOpenParentFolder = (treeData, id) => {
 }
 export const ForestContext = React.createContext();
 
-const Forest = ({ defaultChooseId, defaultForest, onHandleChoose = () => { }, onClickFolder = () => { } }) => {
+const FolderForest = ({ defaultChooseId, defaultForest, onChoose = () => { }}) => {
     const [forest, setForest] = useState(defaultForest);
     const OpenOrCloseText = forest.some(it => it.open) ? "closeAll" : "openAll";
 
@@ -58,7 +57,7 @@ const Forest = ({ defaultChooseId, defaultForest, onHandleChoose = () => { }, on
 
     const handleOpenOrClose = (id) => {
         setForest(forest.map(it => {
-            return openOrCloseTreeDataById(it, id);
+            return toggleTreeDataById(it, id);
         }));
     };
 
@@ -72,11 +71,11 @@ const Forest = ({ defaultChooseId, defaultForest, onHandleChoose = () => { }, on
         return null;
     };
 
-    const openOrCloseTreeDataById = (treeData, id) => {
+    const toggleTreeDataById = (treeData, id) => {
         if (treeData.id === id) {
             return { ...treeData, open: !treeData.open };
         }
-        const targetChild = findAndReturn(treeData.children, it => openOrCloseTreeDataById(it, id), (a, b) => (a !== b));
+        const targetChild = findAndReturn(treeData.children, it => toggleTreeDataById(it, id), (a, b) => (a !== b));
         if (targetChild === null) {
             return treeData;
         }
@@ -87,17 +86,17 @@ const Forest = ({ defaultChooseId, defaultForest, onHandleChoose = () => { }, on
     };
 
     const toggleAllTree = () => {
-        const isOpen = !forest.some(it => it.open);
+        const allClosed = forest.all(it => !it.open);
         setForest(forest.map(treeData => {
-            return openOrCloseAll(treeData, isOpen);
+            return toggleTree(treeData, allClosed);
         }));
     };
 
-    const openOrCloseAll = (treeData, isOpen) => {
+    const toggleTree = (treeData, isOpen) => {
         const copyTreeData = { ...treeData, open: isOpen };
         if (copyTreeData.children.length > 0) {
             const children = copyTreeData.children.map(childrenData => {
-                return openOrCloseAll(childrenData, isOpen);
+                return toggleTree(childrenData, isOpen);
             });
             return { ...copyTreeData, children: children }
         }
@@ -105,8 +104,7 @@ const Forest = ({ defaultChooseId, defaultForest, onHandleChoose = () => { }, on
     };
 
     const handleChoose = (id) => {
-        onHandleChoose(id);
-        onClickFolder(id);
+        onChoose(id);
         setForest(forest.map(it => {
             return updateChooseById(it, id);
         }));
@@ -122,7 +120,7 @@ const Forest = ({ defaultChooseId, defaultForest, onHandleChoose = () => { }, on
                 <div className="forest-body">
                     {forest.map(item => {
                         return <TreeItem
-                            key={item.id + "TreeItem"}
+                            key={item.id}
                             data={item} />
                     })}
                 </div>
@@ -132,4 +130,4 @@ const Forest = ({ defaultChooseId, defaultForest, onHandleChoose = () => { }, on
         </ForestContext.Provider>
     );
 };
-export default Forest;
+export default FolderForest;
