@@ -48,7 +48,6 @@ const FilePanel = ({ defaultFiles, onChooseFile = () => { }, defaultChosenFiles 
                 shiftStartIndex: currentClickIndex,
             });
         }
-        console.log(chosenState);
     };
 
     const handleClickWhiteSpace = () => {

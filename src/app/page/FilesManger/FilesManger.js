@@ -67,9 +67,8 @@ const FilesManger = ({ filesMove, filesDelete, filesCopy }) => {
         }
     }, [chosenFiles])
 
-    const onChooseFile = (chosenFilesId) => {
-        setChosenFiles(files.filter(it=>chosenFilesId.includes(it.id)));
-    }
+    const onChooseFile = (chosenFilesId) => setChosenFiles(files.filter(it=>chosenFilesId.includes(it.id)));
+
     return <div className="show-files-div">
         <div className="show-files-menu">
             <button

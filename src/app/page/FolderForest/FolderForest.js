@@ -4,9 +4,8 @@ import "./FolderForest.css"
 
 const updateChooseById = (treeData, id) => {
     if (treeData.children.length > 0) {
-        const children = treeData.children.map(childrenData => {
-            return updateChooseById(childrenData, id);
-        });
+        const children = treeData.children.map(childrenData => updateChooseById(childrenData, id));
+
         if (children.some((it, index) => it !== treeData.children[index])) {
             if (treeData.id === id) {
                 return { ...treeData, choose: true, children: children };
@@ -24,9 +23,7 @@ const updateChooseById = (treeData, id) => {
 };
 const chooseFolderAndOpenParentFolder = (treeData, id) => {
     if (treeData.children.length > 0) {
-        const children = treeData.children.map(childrenData => {
-            return chooseFolderAndOpenParentFolder(childrenData, id);
-        });
+        const children = treeData.children.map(childrenData => chooseFolderAndOpenParentFolder(childrenData, id));
         const childrenHaveOpen = children.some(it => it.choose || it.open);
         if (children.some((it, index) => it !== treeData.children[index])) {
             if (treeData.id === id) {
@@ -50,15 +47,11 @@ const FolderForest = ({ defaultChooseId, defaultForest, onChoose = () => { }}) =
     const OpenOrCloseText = forest.some(it => it.open) ? "closeAll" : "openAll";
 
     useEffect(() => {
-        setForest(defaultForest.map(it => {
-            return chooseFolderAndOpenParentFolder(it, defaultChooseId);
-        }));
+        setForest(defaultForest.map(it => chooseFolderAndOpenParentFolder(it, defaultChooseId)));
     }, [defaultChooseId])
 
     const handleOpenOrClose = (id) => {
-        setForest(forest.map(it => {
-            return toggleTreeDataById(it, id);
-        }));
+        setForest(forest.map(it =>  toggleTreeDataById(it, id)));
     };
 
     const findAndReturn = (array, iterator, assert) => {
@@ -87,17 +80,13 @@ const FolderForest = ({ defaultChooseId, defaultForest, onChoose = () => { }}) =
 
     const toggleAllTree = () => {
         const allClosed = forest.all(it => !it.open);
-        setForest(forest.map(treeData => {
-            return toggleTree(treeData, allClosed);
-        }));
+        setForest(forest.map(treeData => toggleTree(treeData, allClosed)));
     };
 
     const toggleTree = (treeData, isOpen) => {
         const copyTreeData = { ...treeData, open: isOpen };
         if (copyTreeData.children.length > 0) {
-            const children = copyTreeData.children.map(childrenData => {
-                return toggleTree(childrenData, isOpen);
-            });
+            const children = copyTreeData.children.map(childrenData => toggleTree(childrenData, isOpen));
             return { ...copyTreeData, children: children }
         }
         return copyTreeData;
@@ -105,9 +94,7 @@ const FolderForest = ({ defaultChooseId, defaultForest, onChoose = () => { }}) =
 
     const handleChoose = (id) => {
         onChoose(id);
-        setForest(forest.map(it => {
-            return updateChooseById(it, id);
-        }));
+        setForest(forest.map(it => updateChooseById(it, id)));
     };
 
     return (
