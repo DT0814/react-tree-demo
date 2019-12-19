@@ -1,26 +1,20 @@
-import React, { useContext, useState, useEffect, useMemo } from "react";
+import React, { useContext, useState, useMemo } from "react";
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
-import { range } from 'lodash'
 import './FilesManger.css'
 import { SysContext } from "../../App";
-import FileItem from "../../components/FileItem/FileItem";
 import FilePanel from "../../components/FilePanel/FilePanel";
 import FolderForest from "../FolderForest/FolderForest";
 import { getForest } from "../../../utils/ForestUtils";
 import { usePromise } from "../../../utils/usePromise";
 
-const FilesManger = ({ filesMove, filesDelete, filesCopy }) => {
-    const context = useContext(SysContext);
-    const files = context.currentFiles.files;
-    const [chosenFiles, setChosenFiles] = useState([...context.currentFiles.chosenFiles]);
+const FilesManger = ({ onMoveFiles, onDeleteFiles, onCopyFiles }) => {
+    const { selectedFolder, toggleTreeDataById, toggleTree, updateChooseById } = useContext(SysContext);
+    const {chosenFilesId} = selectedFolder;
+
     const [showModal, setShowModal] = useState(false);
     const [destFolderId, setDestFolderId] = useState(-1);
     const [confirmLoading, setConfirmLoading] = useState(false);
-
-    useEffect(() => {
-        setChosenFiles(context.currentFiles.chosenFiles);
-    }, [context.currentFiles.chosenFiles])
 
     const handleDelete = () => {
         const { confirm } = Modal;
@@ -31,54 +25,63 @@ const FilesManger = ({ filesMove, filesDelete, filesCopy }) => {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                filesDelete(chosenFiles);
+                onDeleteFiles();
             },
             onCancel() {
             },
         });
     }
 
-    const moveButAble = chosenFiles.length > 0;
-    const copyButAble = chosenFiles.length > 0;
-    const deleteButAble = chosenFiles.length > 0;
-    const defaultForest = getForest();
+    const moveButAble = chosenFilesId.length > 0;
+    const copyButAble = chosenFilesId.length > 0;
+    const deleteButAble = chosenFilesId.length > 0;
 
     const [selectFolderId, resolve, reject] = usePromise(() => () => setShowModal(true), [setShowModal]);
 
-    const handleMove = useMemo(() => async (chosenFiles) => {
+    const handleMove = useMemo(() => async (chosenFilesId) => {
         try {
             const destFolderId = await selectFolderId();
-            filesMove(chosenFiles, destFolderId);
+            onMoveFiles( destFolderId);
         } catch{
 
         } finally {
             setShowModal(false);
         }
-    }, [chosenFiles])
+    }, [chosenFilesId])
 
-    const handleCopy = useMemo(() => async (chosenFiles) => {
+    const handleCopy = useMemo(() => async (chosenFilesId) => {
         try {
             const destFolderId = await selectFolderId();
-            filesCopy(chosenFiles, destFolderId);
+            onCopyFiles( destFolderId);
         } catch{
 
         } finally {
             setShowModal(false);
         }
-    }, [chosenFiles])
+    }, [chosenFilesId])
 
-    const onChooseFile = (chosenFilesId) => setChosenFiles(files.filter(it=>chosenFilesId.includes(it.id)));
 
-    return <div className="show-files-div">
+    const [forest, setForest] = useState(getForest());
+
+    const handleOpenOrClose = (id) => {
+        setForest(forest.map(it => toggleTreeDataById(it, id)));
+    };
+
+    const handleToggleAllTree = () => {
+        const allClosed = forest.all(it => !it.open);
+        setForest(forest.map(treeData => toggleTree(treeData, allClosed)));
+    };
+
+    return <div className="show-files-div" >
         <div className="show-files-menu">
             <button
                 className={moveButAble ? "show-files-menu-move" : "show-files-menu-move-disable"}
-                onClick={() => handleMove(chosenFiles)}
+                onClick={() => handleMove(chosenFilesId)}
                 disabled={!moveButAble}
             >Move</button>
             <button
                 className={copyButAble ? "show-files-menu-copy" : "show-files-menu-copy-disable"}
-                onClick={() => handleCopy(chosenFiles)}
+                onClick={() => handleCopy(chosenFilesId)}
                 disabled={!copyButAble}
             >Copy</button>
             <button
@@ -87,10 +90,7 @@ const FilesManger = ({ filesMove, filesDelete, filesCopy }) => {
                 disabled={!deleteButAble}
             >Delete</button>
         </div>
-        <FilePanel
-            defaultFiles={files}
-            onChooseFile={onChooseFile}
-            defaultChosenFiles={chosenFiles} />
+        <FilePanel />
         <Modal
             title="选择移动到的文件夹"
             visible={showModal}
@@ -100,10 +100,15 @@ const FilesManger = ({ filesMove, filesDelete, filesCopy }) => {
             confirmLoading={confirmLoading}
         >
             <div className="move-folder">
-                <FolderForest defaultForest={defaultForest}
+                <FolderForest
+                    defaultForest={forest}
+                    onOpenOrClose={handleOpenOrClose}
+                    onToggleAllTree={handleToggleAllTree}
                     onChoose={(destFolderId) => {
-                        setConfirmLoading(destFolderId === context.currentId);
-                        setDestFolderId(destFolderId)
+
+                        setConfirmLoading(destFolderId === selectedFolder.id);
+                        setDestFolderId(destFolderId);
+                        setForest(forest.map(it => updateChooseById(it, destFolderId)));
                     }}
                 />
             </div>

@@ -51,6 +51,7 @@ const generateName = (type) => {
     return name.map(() => characters[getRandom(0, characters.length - 1)]).join('') + `.${type}`;
 };
 const filesMap = new Map();
+
 export const getFilesByFolderId = (id) => {
     if(filesMap.has(id)){
         return filesMap.get(id);
@@ -62,7 +63,7 @@ export const getFilesByFolderId = (id) => {
     return files;
 };
 
-export const filesMove = (files,toFolderID,currentId) => {
+export const moveFiles = (files,toFolderID,currentId) => {
     const filesId = files.map(it => it.id);
     filesMap.set(currentId,filesMap.get(currentId).filter(it => !filesId.includes(it.id)));
     if(filesMap.has(toFolderID)){
@@ -75,7 +76,7 @@ export const filesMove = (files,toFolderID,currentId) => {
     }
 };
 
-export const filesCopy = (files,destFolderId,currentId) => {
+export const copyFiles = (files,destFolderId,currentId) => {
     const newFiles = files.map(it => {return {...it,id:getUUID()}});
     if(filesMap.has(destFolderId)){
             filesMap.set(destFolderId,[...filesMap.get(destFolderId),...newFiles]);
@@ -88,7 +89,7 @@ export const filesCopy = (files,destFolderId,currentId) => {
     return newFiles;
 };
 
-export const filesDelete = (files,currentId) => {
+export const deleteFiles = (files,currentId) => {
     const filesId = files.map(it => it.id);
     filesMap.set(currentId,filesMap.get(currentId).filter(it => !filesId.includes(it.id)) );
 };

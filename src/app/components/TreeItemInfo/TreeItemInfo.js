@@ -8,15 +8,15 @@ import { ForestContext } from "../../page/FolderForest/FolderForest";
 
 const TreeItemInfo = (props) => {
     const { showChildren, text, treeId } = props;
-    const { handleOpenOrClose, handleChoose } = useContext(ForestContext);
+    const { onOpenOrClose, onChoose } = useContext(ForestContext);
 
     const handleClickOpenOrClose = (event) => {
         event.stopPropagation();
-        handleOpenOrClose(treeId);
+        onOpenOrClose(treeId);
     };
 
     const handleClickChoose = (e) => {
-        handleChoose(treeId);
+        onChoose(treeId);
     };
     return (
         <div className="tree-info-div" onClick={handleClickChoose}>
