@@ -123,7 +123,7 @@ function App() {
     };
 
     const handleToggleAllTree = () => {
-        const allClosed = folder.forest.all(it => !it.open);
+        const allClosed = folder.forest.every(it => !it.open);
         setFolder({ ...folder, forest: folder.forest.map(treeData => toggleTree(treeData, allClosed)) });
     };
 
@@ -161,7 +161,6 @@ function App() {
     }
 
     const handleDeleteFiles = () => {
-        debugger;
         const { files, chosenFilesId } = folder.selectedFolder;
         deleteFiles(files.filter(it => chosenFilesId.includes(it.id)), folder.selectedFolder.id);
         const newForest = folder.forest.map(it => updateTreeNodeFilesById(it, folder.selectedFolder.id, getFilesByFolderId(folder.selectedFolder.id)));
@@ -196,7 +195,7 @@ function App() {
             <div className="body-div">
                 <div className="body-div-left">
                     <FolderForest
-                        defaultForest={folder.forest}
+                        forest={folder.forest}
                         onChoose={handleChoose}
                         onOpenOrClose={handleOpenOrClose}
                         onToggleAllTree={handleToggleAllTree}

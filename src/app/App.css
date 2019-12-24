@@ -11,3 +11,6 @@
 .body-div-right {
     flex:7;
 }
+button {
+    outline:none;
+}

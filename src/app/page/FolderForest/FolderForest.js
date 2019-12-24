@@ -4,20 +4,15 @@ import "./FolderForest.css"
 
 export const ForestContext = React.createContext();
 
-const FolderForest = ({ defaultForest, onChoose = () => { }, onOpenOrClose, toggleAllTree }) => {
-    const [forest, setForest] = useState(defaultForest);
+const FolderForest = ({ forest, onChoose = () => { }, onOpenOrClose, onToggleAllTree }) => {
     const OpenOrCloseText = forest.some(it => it.open) ? "closeAll" : "openAll";
-
-    useEffect(() => {
-        setForest(defaultForest);
-    }, [defaultForest])
 
     return (
         <ForestContext.Provider
             value={{ onOpenOrClose, onChoose }}>
             <div className="forest-div">
                 <div className="forest-header-div">
-                    <button onClick={toggleAllTree}>{OpenOrCloseText}</button>
+                    <button onClick={onToggleAllTree}>{OpenOrCloseText}</button>
                 </div>
                 <div className="forest-body">
                     {forest.map(item => {
